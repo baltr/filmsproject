@@ -1,7 +1,7 @@
 <template>
   <div>
     <input type="text" v-model="searchQuery" placeholder="Search..."/>
-    <button @click="fetchBySearchQuery">Search</button>
+    <button @click="fetchBySearchQuery" class="searchButton">Search</button>
     <FilmsList :filmsList="filmsList"/>
   </div>
 </template>
@@ -30,3 +30,10 @@ export default{
   }
 }
 </script>
+
+<style lang="scss">
+.searchButton{
+  background-color: rgb(48, 48, 102);
+  color: white;
+}
+</style>

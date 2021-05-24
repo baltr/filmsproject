@@ -20,12 +20,16 @@
             </router-link>
         </div>
         <div id="pageNav">
+            <button @click="firstPage" :disabled="selectedPage === 1">First</button>
+            <button @click="previousPage" :disabled="selectedPage === 1">Previous</button>
             <form v-if="totalPages > 0">
                 <div class="pageSelector" v-for="page in totalPages" :key="page">
                     <input class="radio" type="radio" :value="page" :id="page" v-model="selectedPage"/>
                     <label :for="page">{{page}}</label>
                 </div>
             </form>
+            <button @click="nextPage" :disabled="selectedPage === totalPages">Next</button>
+            <button @click="lastPage" :disabled="selectedPage === totalPages">Last</button>
         </div>
     </div>
 </template>
@@ -36,6 +40,20 @@ export default {
         return{
             selectedPage: 1,
             selectedCategory: 'All',
+        }
+    },
+    methods:{
+        firstPage(){
+            this.selectedPage = 1
+        },
+        previousPage(){
+            this.selectedPage--
+        },
+        nextPage(){
+            this.selectedPage++
+        },
+        lastPage(){
+            this.selectedPage = this.totalPages
         }
     },
     computed:{

@@ -10,19 +10,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: white;
 }
 
-#nav {
-  padding: 30px;
+html{
+  background-color: rgb(46, 46, 116);
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+router-link{
+  text-decoration: none;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+a{
+  text-decoration: none;
+  color:white
 }
 </style>
