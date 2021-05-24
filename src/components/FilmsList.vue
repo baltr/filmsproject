@@ -1,0 +1,71 @@
+<template>
+    <div v-if="filmsList">
+        <div>
+            <form>
+                <input class="radio" type="radio" value="All" id="All" v-model="selectedCategory" checked/>
+                <label for="All">All</label>
+                <input class="radio" type="radio" value="movie" id="Filmovi" v-model="selectedCategory"/>
+                <label for="Filmovi">Filmovi</label>
+                <input class="radio" type="radio" value="series" id="Serije" v-model="selectedCategory"/>
+                <label for="Serije">Serije</label>
+                <input class="radio" type="radio" value="game" id="Videoigre" v-model="selectedCategory"/>
+                <label for="Videoigre">Videoigre</label>
+            </form>
+        </div>
+        <div v-for="film in this.$props.filmsList.Search" :key="film.imdbID">
+            <router-link :to="{path: `/${film.imdbID}`}">
+                <img v-if="film.Poster!=='N/A'" :src="film.Poster"/>
+                <h3 v-else>IMAGE MISSING</h3>
+                <p>{{film.Title}}</p>
+            </router-link>
+        </div>
+        <div id="pageNav">
+            <form v-if="totalPages > 0">
+                <div class="pageSelector" v-for="page in totalPages" :key="page">
+                    <input class="radio" type="radio" :value="page" :id="page" v-model="selectedPage"/>
+                    <label :for="page">{{page}}</label>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    data(){
+        return{
+            selectedPage: 1,
+            selectedCategory: 'All',
+        }
+    },
+    computed:{
+        totalPages(){
+            return Math.ceil(this.$props.filmsList.totalResults / 10)
+        },
+    },
+    watch:{
+        selectedCategory(){
+            this.$store.dispatch('fetchBySelectedCategory', this.selectedCategory)
+        },
+        selectedPage(){
+            this.$store.dispatch('fetchByLastVisitedPage', this.selectedPage)
+        }
+    },
+    props:{
+        filmsList: {
+            type: Object
+        },
+    }
+}
+</script>
+
+<style lang="scss">
+.radio{
+    visibility: hidden;
+    height: 0;
+    width: 0;
+}
+.pageSelector{
+    display: inline-block;
+}
+</style>
