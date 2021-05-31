@@ -5,11 +5,11 @@
                 <input class="radio" type="radio" value="All" id="All" v-model="selectedCategory" checked/>
                 <label for="All">All</label>
                 <input class="radio" type="radio" value="movie" id="Filmovi" v-model="selectedCategory"/>
-                <label for="Filmovi">Filmovi</label>
+                <label for="Filmovi">Films</label>
                 <input class="radio" type="radio" value="series" id="Serije" v-model="selectedCategory"/>
-                <label for="Serije">Serije</label>
+                <label for="Serije">Series</label>
                 <input class="radio" type="radio" value="game" id="Videoigre" v-model="selectedCategory"/>
-                <label for="Videoigre">Videoigre</label>
+                <label for="Videoigre">Videogames</label>
             </form>
         </div>
         <div v-for="film in this.$props.filmsList.Search" :key="film.imdbID">
@@ -19,10 +19,10 @@
                 <p>{{film.Title}}</p>
             </router-link>
         </div>
-        <div id="pageNav">
+        <div id="pageNav" v-if="totalPages > 0">
             <button @click="firstPage" :disabled="selectedPage === 1">First</button>
             <button @click="previousPage" :disabled="selectedPage === 1">Previous</button>
-            <form v-if="totalPages > 0">
+            <form>
                 <div class="pageSelector" v-for="page in totalPages" :key="page">
                     <input class="radio" type="radio" :value="page" :id="page" v-model="selectedPage"/>
                     <label :for="page">{{page}}</label>
@@ -63,10 +63,10 @@ export default {
     },
     watch:{
         selectedCategory(){
-            this.$store.dispatch('fetchBySelectedCategory', this.selectedCategory)
+            this.$store.dispatch('changeSelectedCategory', this.selectedCategory)
         },
         selectedPage(){
-            this.$store.dispatch('fetchByLastVisitedPage', this.selectedPage)
+            this.$store.dispatch('changeLastVisitedPage', this.selectedPage)
         }
     },
     props:{

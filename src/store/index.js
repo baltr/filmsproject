@@ -9,21 +9,13 @@ export default new Vuex.Store({
     searchQuery: null,
     lastVisitedPage: null,
     lastSelectedCategory: null,
-    filmsList: null
+    filmsList: null,
+    url: 'https://www.omdbapi.com/?apikey=70a4c343&s='
   },
   getters: {
-    getSearchQuery: state => {
-      return state.searchQuery
-    },
-    getLastVisitedPage: state => {
-      return state.lastVisitedPage
-    },
-    getLastSelectedCategory: state => {
-      return state.lastSelectedCategory
-    },
     getFilmsList: state => {
       return state.filmsList
-    }
+    },
   },
   mutations: {
     setSearchQuery(state, payload){
@@ -38,33 +30,35 @@ export default new Vuex.Store({
     setFilmsList(state, payload){
       state.filmsList = payload
     },
+    setUrl(state, payload){
+      state.url = payload
+    }
   },
   actions: {
-    fetchBySearchQuery: ({commit}, payload) => {
-      commit('setSearchQuery', payload)
-      axios.get('https://www.omdbapi.com/?apikey=70a4c343&s=' + payload)
-      .then(response => {
-        console.log(response)
-        commit('setFilmsList', response.data)
-      }).catch(response => console.log(response))
+    changeSearchQuery({context}, payload){
+      this.commit('setSearchQuery', payload)
+      this.dispatch('changeUrl')
     },
-    fetchBySelectedCategory: (context, payload) => {
-      context.commit('setLastSelectedCategory', payload)
-      if (payload === 'All') context.dispatch('fetchBySearchQuery', context.getters.getSearchQuery)
-      else{
-        axios.get('https://www.omdbapi.com/?apikey=70a4c343&s=' + context.getters.getSearchQuery + '&type=' + payload)
-        .then(response => {
-          console.log(response)
-          context.commit('setFilmsList', response.data)
-        }).catch(response => console.log(response))
-    }},
-    fetchByLastVisitedPage: (context, payload) => {
-      context.commit('setLastVisitedPage')
-      axios.get('https://www.omdbapi.com/?apikey=70a4c343&s=' + context.getters.getSearchQuery + '&type=' + context.getters.getLastSelectedCategory + '&page=' + payload)
-      .then(response => {
-        console.log(response)
-        context.commit('setFilmsList', response.data)
-      }).catch(response => console.log(response))
+    changeSelectedCategory({context}, payload){
+      this.commit('setLastSelectedCategory', payload)
+      this.dispatch('changeUrl')
     },
+    changeLastVisitedPage({context}, payload){
+      this.commit('setLastVisitedPage', payload)
+      this.dispatch('changeUrl')
+    },
+    changeUrl({context}){
+      this.state.url = 'https://www.omdbapi.com/?apikey=70a4c343&s='
+      this.state.url += this.state.searchQuery
+      if (this.state.lastSelectedCategory && this.state.lastSelectedCategory !== 'All') this.state.url += '&type=' + this.state.lastSelectedCategory
+      if (this.state.lastVisitedPage) this.state.url += '&page=' + this.state.lastVisitedPage
+      this.dispatch('fetchFilms')
+    },
+    fetchFilms({context}){
+      axios.get(this.state.url)
+      .then(response => {
+        this.commit('setFilmsList', response.data)
+      }).catch(response => console.log(response))
+    }
   }
 })

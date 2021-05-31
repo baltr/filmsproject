@@ -17,7 +17,7 @@ export default{
   },
   methods:{
     fetchBySearchQuery(){
-      this.$store.dispatch('fetchBySearchQuery', this.searchQuery)
+      this.$store.dispatch('changeSearchQuery', this.searchQuery)
     }
   },
   computed:{
