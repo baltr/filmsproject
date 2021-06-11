@@ -44,18 +44,32 @@ export default new Vuex.Store({
     setItemList(state, payload){
       state.itemList = payload
     },
+    setCachedLists(state, payload){
+      state.cachedLists = payload
+    },
     pushToCachedLists(state, payload){
-      state.cachedLists.push(payload)
+      state.cachedLists.push({list: payload, category: state.activeCategory, page: state.activePage})
     }
   },
   actions: {
     fetchSearchResults(context){
+      const cachedLists = context.getters.getCachedLists
+      const activePage = context.getters.getActivePage
       const activeCategory = context.getters.getActiveCategory
       const categoryToSearch = activeCategory === 'All' ? '' : activeCategory
-      axios.get(`https://www.omdbapi.com/?apikey=70a4c343&s=${context.getters.getSearchQuery}&type=${categoryToSearch}&page=${context.getters.getActivePage}`)
-      .then(response => {
-        context.commit('setItemList', response.data)
-      }).catch(response => context.commit('setItemList', response))
+      if (cachedLists && cachedLists.find(cachedLists => {
+        return cachedLists.category === activeCategory && cachedLists.page === activePage
+      })) context.commit('setItemList', cachedLists.find(cachedLists => {
+        return cachedLists.category === activeCategory && cachedLists.page === activePage
+      }).list)
+      else {
+        axios.get(`https://www.omdbapi.com/?apikey=70a4c343&s=${context.getters.getSearchQuery}&type=${categoryToSearch}&page=${activePage}`)
+        .then(response => {
+          if (!cachedLists) context.commit('setCachedLists', [{list: response.data, category: activeCategory, page: activePage}])
+          else context.commit('pushToCachedLists', response.data)
+          context.commit('setItemList', response.data)
+        }).catch(response => context.commit('setItemList', response))
+      }
     }
   }
 })
