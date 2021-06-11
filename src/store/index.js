@@ -6,59 +6,56 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    searchQuery: null,
-    lastVisitedPage: null,
-    lastSelectedCategory: null,
-    filmsList: null,
-    url: 'https://www.omdbapi.com/?apikey=70a4c343&s='
+    searchQuery: '',
+    activePage: 1,
+    activeCategory: 'All',
+    itemList: null,
+    cachedLists: null,
   },
   getters: {
-    getFilmsList: state => {
-      return state.filmsList
+    getSearchQuery: state => {
+      return state.searchQuery
     },
+    getItemList: state => {
+      return state.itemList
+    },
+    getActiveCategory: state => {
+      return state.activeCategory
+    },
+    getActivePage: state => {
+      return state.activePage
+    },
+    getCachedLists: state => {
+      return state.cachedLists
+    }
   },
   mutations: {
     setSearchQuery(state, payload){
       state.searchQuery = payload
+      state.cachedLists = null
     },
-    setLastVisitedPage(state, payload){
-      state.lastVisitedPage = payload
+    setActivePage(state, payload){
+      state.activePage = payload
     },
-    setLastSelectedCategory(state, payload){
-      state.lastSelectedCategory = payload
+    setActiveCategory(state, payload){
+      state.activeCategory = payload
+      state.activePage = 1
     },
-    setFilmsList(state, payload){
-      state.filmsList = payload
+    setItemList(state, payload){
+      state.itemList = payload
     },
-    setUrl(state, payload){
-      state.url = payload
+    pushToCachedLists(state, payload){
+      state.cachedLists.push(payload)
     }
   },
   actions: {
-    changeSearchQuery({context}, payload){
-      this.commit('setSearchQuery', payload)
-      this.dispatch('changeUrl')
-    },
-    changeSelectedCategory({context}, payload){
-      this.commit('setLastSelectedCategory', payload)
-      this.dispatch('changeUrl')
-    },
-    changeLastVisitedPage({context}, payload){
-      this.commit('setLastVisitedPage', payload)
-      this.dispatch('changeUrl')
-    },
-    changeUrl({context}){
-      this.state.url = 'https://www.omdbapi.com/?apikey=70a4c343&s='
-      this.state.url += this.state.searchQuery
-      if (this.state.lastSelectedCategory && this.state.lastSelectedCategory !== 'All') this.state.url += '&type=' + this.state.lastSelectedCategory
-      if (this.state.lastVisitedPage) this.state.url += '&page=' + this.state.lastVisitedPage
-      this.dispatch('fetchFilms')
-    },
-    fetchFilms({context}){
-      axios.get(this.state.url)
+    fetchSearchResults(context){
+      const activeCategory = context.getters.getActiveCategory
+      const categoryToSearch = activeCategory === 'All' ? '' : activeCategory
+      axios.get(`https://www.omdbapi.com/?apikey=70a4c343&s=${context.getters.getSearchQuery}&type=${categoryToSearch}&page=${context.getters.getActivePage}`)
       .then(response => {
-        this.commit('setFilmsList', response.data)
-      }).catch(response => console.log(response))
+        context.commit('setItemList', response.data)
+      }).catch(response => context.commit('setItemList', response))
     }
   }
 })

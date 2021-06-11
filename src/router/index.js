@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import FilmSpecific from '../views/FilmSpecific.vue'
+import ItemDetails from '../views/ItemDetails.vue'
 
 Vue.use(VueRouter)
 
@@ -13,8 +13,8 @@ const routes = [
   },
   {
     path: '/:id',
-    name: 'FilmSpecific',
-    component: FilmSpecific
+    name: 'ItemDetails',
+    component: ItemDetails
   }
 ]
 
