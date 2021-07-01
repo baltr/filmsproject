@@ -16,14 +16,16 @@
             <div class="itemList">
                 <div class="item" v-for="item in itemList.Search" :key="item.imdbID">
                     <router-link :to="{path: `/${item.imdbID}`}">
-                        <img v-if="item.Poster!=='N/A'" :src="item.Poster"/>
-                        <img v-else src='../assets/missing.png'/>
+                        <div class="imgwrapper">
+                            <img v-if="item.Poster!=='N/A'" :src="item.Poster"/>
+                            <img v-else src='../assets/missing.png'/>
+                        </div>
                         <p>{{item.Title}}</p>
                     </router-link>
                 </div>
             </div>
             <div id="pageNav" v-if="totalPages">
-                <div class="fl-left">
+                <div class="fl-left back">
                     <button @click="firstPage" :disabled="selectedPage === 1">First</button>
                     <button @click="previousPage" :disabled="selectedPage === 1">Previous</button>
                 </div>
@@ -33,13 +35,13 @@
                         <label :for="page">{{page}}</label>
                     </div>
                 </form>
-                <div class="fl-left">
+                <div class="fl-left forward">
                     <button @click="nextPage" :disabled="selectedPage === totalPages">Next</button>
                     <button @click="lastPage" :disabled="selectedPage === totalPages">Last</button>
                 </div>
             </div>
         </div>
-        <div v-else>
+        <div class="noresults" v-else>
             No results found
         </div>
     </div>
@@ -83,7 +85,7 @@ export default {
             this.$store.commit('setActivePage', this.selectedPage)
             this.$router.replace({query: {...this.$route.query, page: this.selectedPage}})
             this.$store.dispatch('fetchSearchResults')
-        }
+        },
     },
     props:{
         itemList: {
@@ -92,43 +94,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss">
-.fl-left{
-    float:left
-}
-.catSelect{
-    margin: 25px 0;
-}
-.radio{
-    height: 0;
-	width: 0;
-	visibility: hidden;
-	&:checked {
-		+label {
-			color: #00aeff;
-			text-decoration: underline;
-		}
-	}
-}
-.itemList{
-    max-width: 1250px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-.item{
-    flex-grow: 1;
-    width: 250px;
-    img{
-        max-width: 250px;
-        max-height: 250px;
-    }
-}
-#pageNav{
-    display: inline-block
-}
-.pageSelector{
-    display: inline-block;
-}
-</style>

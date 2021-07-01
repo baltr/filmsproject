@@ -1,0 +1,22 @@
+@media (min-width:680px){
+    .detailsWrapper{
+        padding-top: 100px;
+        max-height: 400px;
+        max-width: 1080px;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        .details{
+            overflow: auto;
+            max-width:600px;
+        }
+        img{
+            margin: 0px 20px;
+        }
+    }
+    .return{
+        margin-top: 50px;
+    }
+}
+@media (max-width:680px){
+}

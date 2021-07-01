@@ -1,18 +1,23 @@
 <template>
     <div>
-        <div class="detailsWrapper" v-if="item">
-            <img v-if="item.Poster!=='N/A'" :src="item.Poster"/>
-            <img v-else src='../assets/missing.png'/>
-            <div class="details">
-                <h3>{{item.Title}}</h3>
-                <p>Genre: {{item.Genre}}</p>
-                <p>Year of Release: {{year}}</p>
-                <p>Director: {{item.Director}}</p>
-                <p>{{item.Plot}}</p>
+        <div v-if="item">
+            <div class="detailsWrapper" v-if="item.Response === 'True'">
+                <img v-if="item.Poster!=='N/A'" :src="item.Poster"/>
+                <img v-else src='../assets/missing.png'/>
+                <div class="details">
+                    <h3>{{item.Title}}</h3>
+                    <p>Genre: {{item.Genre}}</p>
+                    <p>Year of Release: {{year}}</p>
+                    <p>Director: {{item.Director}}</p>
+                    <p>{{item.Plot}}</p>
+                </div>
+            </div>
+            <div class="noresults" v-else>
+                Cannot find media under that ID
             </div>
         </div>
         <router-link :to="{path: '/', query: computedQuery}">
-            <button>Return</button>
+            <button class="return">Return</button>
         </router-link>
     </div>
 </template>
@@ -37,7 +42,7 @@ export default {
     },
     computed:{
         year(){
-            return DateTime.fromString(this.item.Released, 'dd MMM yyyy').toFormat('yyyy')
+            if (this.item.Response === "True") return DateTime.fromString(this.item.Released, 'dd MMM yyyy').toFormat('yyyy')
         },
         computedQuery(){
             return {
@@ -54,11 +59,5 @@ export default {
 </script>
 
 <style lang="scss">
-.detailsWrapper{
-    max-width: 1080px;
-    margin: auto;
-}
-.details{
-    max-height: 750px;
-}
+@import "../assets/styles/_details.scss"
 </style>

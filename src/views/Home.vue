@@ -52,13 +52,3 @@ export default{
   }
 }
 </script>
-
-<style lang="scss">
-.search{
-  margin-top: 50px;
-}
-.searchButton{
-  background-color: rgb(48, 48, 102);
-  color: white;
-}
-</style>
