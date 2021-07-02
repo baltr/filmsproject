@@ -2,7 +2,14 @@
   <div>
     <input class="search" type="text" v-model="searchQuery" placeholder="Search..."/>
     <button @click="fetchItemList" class="searchButton" :disabled="searchQuery.length < 3">Search</button>
-    <ItemList :itemList="itemList"/>
+    <div v-if="itemList">
+      <div v-if="itemList.Response === 'True'">
+        <ItemList :itemList="itemList"/>
+      </div>
+      <div class="noresults" v-else>
+        No results found
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,15 +24,14 @@ export default{
   },
   methods:{
     fetchItemList(){
-      if (this.searchQuery !== this.$store.getters.getSearchQuery || this.itemList.Response!=='True'){
+      if (this.searchQuery !== this.$store.getters.getSearchQuery || this.itemList.Response !== 'True'){
         this.$store.commit('setSearchQuery', this.searchQuery)
         this.$store.commit('setActiveCategory', 'All')
-        this.$store.commit('setActivePage', 1)
         this.$store.dispatch('fetchSearchResults')
         this.$router.replace({query: {
           search: this.searchQuery,
-          category: this.$store.getters.getActiveCategory,
-          page: this.$store.getters.getActivePage
+          category: 'All',
+          page: 1
         }})
       }
     }
@@ -39,9 +45,10 @@ export default{
     const queryPage = this.$route.query.page
     const queryCategory = this.$route.query.category
     const querySearch = this.$route.query.search
-    if (queryCategory!==this.$store.getters.getActiveCategory && queryCategory!==undefined) this.$store.commit('setActiveCategory', queryCategory)
-    if (queryPage!=this.$store.getters.getActivePage && queryPage!==undefined) this.$store.commit('setActivePage', queryPage)
-    if (querySearch!==this.$store.getters.getSearchQuery && querySearch!==undefined) {
+
+    if (queryCategory && queryCategory !== this.$store.getters.getActiveCategory) this.$store.commit('setActiveCategory', queryCategory)
+    if (queryPage && queryPage != this.$store.getters.getActivePage) this.$store.commit('setActivePage', queryPage)
+    if (querySearch && querySearch !== this.$store.getters.getSearchQuery) {
       this.$store.commit('setSearchQuery', querySearch)
       this.$store.dispatch('fetchSearchResults')
     }

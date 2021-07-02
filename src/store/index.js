@@ -10,7 +10,7 @@ export default new Vuex.Store({
     activePage: 1,
     activeCategory: 'All',
     itemList: null,
-    cachedLists: null,
+    cachedLists: null
   },
   getters: {
     getSearchQuery: state => {
@@ -58,11 +58,13 @@ export default new Vuex.Store({
       const activePage = context.getters.getActivePage
       const activeCategory = context.getters.getActiveCategory
       const categoryToSearch = activeCategory === 'All' ? '' : activeCategory
-      if (cachedLists && cachedLists.find(cachedLists => {
-        return cachedLists.page === activePage
-      })) context.commit('setItemList', cachedLists.find(cachedLists => {
-        return cachedLists.page === activePage
-      }).list)
+
+      let cachedItemList = null
+      if (cachedLists) cachedItemList = cachedLists.find(cachedLists => {
+        return cachedLists.page == activePage
+      })
+
+      if (cachedLists && cachedItemList) context.commit('setItemList', cachedItemList.list)     
       else {
         axios.get(`https://www.omdbapi.com/?apikey=70a4c343&s=${context.getters.getSearchQuery}&type=${categoryToSearch}&page=${activePage}`)
         .then(response => {

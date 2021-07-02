@@ -23,6 +23,7 @@
     justify-content: center;
 }
 .item{
+    margin-top: 10px;
     flex-grow: 1;
     width: 250px;
     .imgwrapper{
@@ -45,6 +46,11 @@
             min-width: 22px
         }
     }
+    button{
+        background-color: rgb(48, 48, 102);
+        color: white;
+        margin: 10px 10px 10px 0
+    }
     margin-top: 50px;
     display: flex;
     justify-content: center;
@@ -52,16 +58,6 @@
 }
 .pageSelector{
     display: inline-block;
-}
-.back{
-    button{
-        margin: 10px 10px 10px 0
-    }
-}
-.forward{
-    button{
-        margin: 10px 10px 10px 0
-    }
 }
 .noresults{
     margin-top: 100px;

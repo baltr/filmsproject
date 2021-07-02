@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="noresults" v-else>
-                Cannot find media under that ID
+                {{item.Error}}
             </div>
         </div>
         <router-link :to="{path: '/', query: computedQuery}">
@@ -29,16 +29,14 @@ import {DateTime} from 'luxon'
 export default {
     data(){
         return{
-            item: null,
+            item: null
         }
     },
     methods:{
         fetchItem(){
             axios.get('https://www.omdbapi.com/?apikey=70a4c343&i=' + this.$route.params.id)
-            .then(response => {
-                this.item = response.data
-            }).catch(response => console.log(response))
-        },        
+            .then(response => this.item = response.data).catch(response => console.log(response))
+        }      
     },
     computed:{
         year(){
@@ -57,7 +55,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss">
-@import "../assets/styles/_details.scss"
-</style>
