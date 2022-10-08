@@ -29,7 +29,7 @@
                 <button @click="selectedPage--" :disabled="selectedPage === 1">Previous</button>
             </div>
             <form class="fl-left">
-                <div class="pageSelector" v-for="page in totalPages" :key="page">
+                <div class="pageSelector" v-for="page in shownPages" :key="page">
                     <input class="radio" type="radio" :value="page" :id="page" v-model="selectedPage"/>
                     <label :for="page">{{page}}</label>
                 </div>
@@ -43,16 +43,28 @@
 </template>
 
 <script>
+import lodash from 'lodash'
+
 export default {
     data(){
         return{
             selectedPage: this.$store.getters.getActivePage,
-            selectedCategory: this.$store.getters.getActiveCategory
+            selectedCategory: this.$store.getters.getActiveCategory,
+            itemsPerPage: 10
         }
     },
     computed:{
         totalPages(){
-            return Math.ceil(this.$props.itemList.totalResults / 10)
+            return Math.ceil(this.$props.itemList.totalResults / this.itemsPerPage)
+        },
+        shownPages(){
+            const page = this.selectedPage
+            const totalPages = this.totalPages
+
+            const pages = _.range(1, totalPages + 1)
+            if (page < 3) return _.take(pages, 5)
+            else if (page > totalPages - 3) return _.takeRight(pages, 5)
+            else return _.slice(pages, page - 3, page + 2)
         }
     },
     watch:{
